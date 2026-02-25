@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bonjour!">
+<title>Bonjour! — Learn French</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0e17;
+  --surface: #1a1830;
+  --card: #211f38;
+  --border: #2e2b4a;
+  --indigo: #6c63ff;
+  --blue: #4f8ef7;
+  --pink: #ff6b9d;
+  --yellow: #ffd166;
+  --green: #06d6a0;
+  --red: #ef476f;
+  --orange: #f4845f;
+  --text: #eeeaf4;
+  --muted: #8b8aa0;
+  --r: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{font-size:16px;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Outfit',sans-serif;font-weight:400;
+  min-height:100vh;
+  padding-bottom:max(80px,env(safe-area-inset-bottom,80px));
+  background-image:
+    radial-gradient(ellipse at 10% 0%,rgba(108,99,255,.12) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 100%,rgba(255,107,157,.08) 0%,transparent 50%);
+}
+
+/* NAV */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(26,24,48,.97);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;z-index:50;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.nav-btn{
+  flex:1;padding:12px 4px 10px;
+  background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--muted);transition:color .2s;
+  font-family:'Outfit',sans-serif;
+}
+.nav-btn.active{color:var(--indigo);}
+.nav-icon{font-size:1.3rem;}
+.nav-label{font-size:.6rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+
+/* SCREENS */
+.screen{display:none;padding:0 16px;max-width:500px;margin:0 auto;}
+.screen.active{display:block;}
+
+/* HEADER */
+.hdr{
+  padding:56px 20px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:500px;margin:0 auto;
+}
+.hdr-title{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;}
+.hdr-title span{color:var(--indigo);font-style:italic;}
+.xp-pill{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:999px;padding:6px 14px;
+  font-size:.78rem;font-weight:600;color:var(--yellow);
+  display:flex;align-items:center;gap:6px;
+}
+
+/* STREAK */
+.streak-card{
+  background:linear-gradient(135deg,var(--indigo),#9b59b6);
+  border-radius:var(--r);padding:20px;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.streak-num{font-family:'Fraunces',serif;font-size:3rem;font-weight:700;line-height:1;}
+.streak-lbl{font-size:.72rem;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+
+/* SECTION CARDS */
+.section-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.sec-card{
+  border-radius:var(--r);padding:18px 20px;cursor:pointer;
+  border:1px solid transparent;transition:all .2s;
+  display:flex;align-items:center;gap:16px;
+}
+.sec-card:active{transform:scale(.98);}
+.sec-card.words{background:linear-gradient(135deg,rgba(108,99,255,.25),rgba(79,142,247,.15));border-color:rgba(108,99,255,.4);}
+.sec-card.phrases{background:linear-gradient(135deg,rgba(255,107,157,.2),rgba(244,132,95,.12));border-color:rgba(255,107,157,.35);}
+.sec-card.practical{background:linear-gradient(135deg,rgba(6,214,160,.18),rgba(79,142,247,.12));border-color:rgba(6,214,160,.3);}
+.sec-icon{font-size:2.2rem;}
+.sec-info{flex:1;}
+.sec-name{font-size:1rem;font-weight:700;}
+.sec-desc{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.sec-prog{margin-top:8px;}
+.sec-prog-bar{height:4px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;}
+.sec-prog-fill{height:100%;border-radius:999px;transition:width .5s ease;}
+.words .sec-prog-fill{background:var(--indigo);}
+.phrases .sec-prog-fill{background:var(--pink);}
+.practical .sec-prog-fill{background:var(--green);}
+.sec-count{font-size:.65rem;color:var(--muted);margin-top:4px;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.stat-num{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;}
+.stat-lbl{font-size:.72rem;color:var(--muted);margin-top:2px;}
+
+/* SECTION SCREEN */
+.back-row{
+  padding:56px 16px 12px;max-width:500px;margin:0 auto;
+  display:flex;align-items:center;gap:12px;
+}
+.back-btn{
+  width:36px;height:36px;background:var(--card);
+  border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;color:var(--text);font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.sec-header-title{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;}
+
+.daily-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;
+}
+.box-label{
+  font-size:.65rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:12px;
+}
+.word-pills{display:flex;flex-wrap:wrap;gap:8px;}
+.word-pill{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;flex:1;min-width:110px;
+}
+.pill-fr{font-size:.95rem;font-weight:600;}
+.pill-en{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.pill-pos{font-size:.58rem;color:var(--indigo);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
+.pill-learned .pill-fr::after{content:' ✓';color:var(--green);}
+
+.action-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.btn{
+  width:100%;padding:15px;border:none;border-radius:var(--r);
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
+  cursor:pointer;transition:all .2s;letter-spacing:.01em;
+}
+.btn-primary{background:var(--indigo);color:white;}
+.btn-primary:hover{background:#5a54e8;transform:translateY(-1px);}
+.btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text);}
+.btn.pink{background:var(--pink);}
+.btn.green{background:var(--green);color:var(--bg);}
+
+/* PRACTICE HEADER */
+.practice-hdr{
+  display:flex;align-items:center;gap:12px;
+  padding:56px 16px 16px;max-width:500px;margin:0 auto;
+}
+.prog-track{flex:1;height:8px;background:var(--border);border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--pink));border-radius:999px;transition:width .4s ease;}
+.q-ctr{font-size:.78rem;font-weight:600;color:var(--muted);white-space:nowrap;}
+.q-area{padding:0 16px;max-width:500px;margin:0 auto;}
+
+/* MC */
+.mc-q{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:14px;
+}
+.mc-prompt{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.mc-word{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:700;}
+.mc-type{font-size:.75rem;color:var(--indigo);margin-top:6px;font-weight:600;}
+.mc-opts{display:flex;flex-direction:column;gap:10px;}
+.mc-opt{
+  padding:15px 18px;background:var(--card);
+  border:2px solid var(--border);border-radius:var(--r);
+  cursor:pointer;font-family:'Outfit',sans-serif;
+  font-size:.92rem;font-weight:500;text-align:left;color:var(--text);
+  transition:all .2s;display:flex;align-items:center;justify-content:space-between;
+}
+.mc-opt:hover:not(:disabled){border-color:var(--indigo);background:rgba(108,99,255,.08);}
+.mc-opt.correct{border-color:var(--green);background:rgba(6,214,160,.12);color:var(--green);}
+.mc-opt.wrong{border-color:var(--red);background:rgba(239,71,111,.12);color:var(--red);}
+.mc-opt:disabled{cursor:default;}
+
+/* FITB */
+.fitb-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:24px 18px;margin-bottom:14px;
+}
+.fitb-lbl{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.fitb-txt{font-size:1.05rem;line-height:1.8;font-weight:500;}
+.fitb-blank{
+  display:inline-block;min-width:90px;height:30px;
+  border-bottom:2px solid var(--indigo);vertical-align:bottom;
+  margin:0 4px;text-align:center;font-weight:700;color:var(--indigo);
+}
+.fitb-row{margin-top:14px;display:flex;gap:8px;}
+.fitb-inp{
+  flex:1;padding:13px 14px;background:var(--surface);
+  border:2px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:1rem;outline:none;
+  transition:border-color .2s;
+}
+.fitb-inp:focus{border-color:var(--indigo);}
+.fitb-inp.ok{border-color:var(--green);}
+.fitb-inp.bad{border-color:var(--red);}
+.go-btn{
+  padding:13px 18px;background:var(--indigo);color:white;
+  border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;
+  font-size:.88rem;font-weight:700;cursor:pointer;
+}
+.fitb-hint{font-size:.75rem;color:var(--muted);margin-top:8px;font-style:italic;}
+.fitb-fb{margin-top:10px;font-size:.88rem;font-weight:600;}
+.fitb-fb.ok{color:var(--green);}
+.fitb-fb.bad{color:var(--red);}
+
+/* RESULT */
+.result-screen{
+  display:none;position:fixed;inset:0;background:var(--bg);z-index:80;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+.result-screen.show{display:flex;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.res-emoji{font-size:5rem;margin-bottom:14px;}
+.res-title{font-family:'Fraunces',serif;font-size:2.3rem;font-weight:700;margin-bottom:6px;}
+.res-sub{color:var(--muted);font-size:1rem;margin-bottom:24px;}
+.res-xp{font-size:1.4rem;font-weight:700;color:var(--yellow);margin-bottom:28px;}
+.res-btn{
+  width:100%;max-width:300px;padding:15px;
+  background:var(--indigo);color:white;border:none;border-radius:var(--r);
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;
+}
+
+/* WORDS BROWSE */
+.search-inp{
+  width:100%;padding:12px 16px;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;
+  margin-bottom:12px;
+}
+.search-inp:focus{border-color:var(--indigo);}
+.filter-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
+.filter-chip{
+  padding:6px 14px;border-radius:999px;white-space:nowrap;
+  border:1px solid var(--border);background:transparent;
+  font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all .2s;
+}
+.filter-chip.active{background:var(--indigo);border-color:var(--indigo);color:white;}
+.words-list{display:flex;flex-direction:column;gap:8px;padding-bottom:20px;}
+.word-row{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:13px 16px;
+  display:flex;align-items:center;gap:12px;
+}
+.wr-num{font-size:.6rem;color:var(--border);min-width:22px;font-weight:700;}
+.wr-info{flex:1;}
+.wr-fr{font-size:.95rem;font-weight:600;}
+.wr-en{font-size:.74rem;color:var(--muted);margin-top:1px;}
+.wr-status{font-size:.62rem;font-weight:700;}
+.s-learned{color:var(--green);}
+.s-today{color:var(--blue);}
+.s-locked{color:var(--border);}
+
+/* SENTENCE TRANSLATION */
+.fitb-translation {
+  font-size:.78rem;color:var(--muted);margin-top:6px;
+  font-style:italic;padding:6px 10px;
+  background:rgba(108,99,255,.06);border-radius:8px;
+  border-left:2px solid var(--indigo);
+}
+.mc-example {
+  font-size:.78rem;color:var(--muted);margin-top:10px;
+  font-style:italic;line-height:1.5;
+}
+.mc-example-en {
+  color:rgba(108,99,255,.7);font-size:.72rem;margin-top:3px;font-style:normal;
+}
+
+/* SPACED REPETITION BADGE */
+.sr-badge {
+  display:inline-block;padding:2px 8px;border-radius:999px;
+  font-size:.58rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;margin-left:6px;vertical-align:middle;
+}
+.sr-new{background:rgba(79,142,247,.2);color:var(--blue);}
+.sr-review{background:rgba(255,209,102,.2);color:var(--yellow);}
+.sr-due{background:rgba(239,71,111,.2);color:var(--red);}
+.sr-known{background:rgba(6,214,160,.2);color:var(--green);}
+
+/* TOAST */
+.toast{
+  position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--card);border:1px solid var(--border);
+  border-radius:999px;padding:9px 18px;
+  font-size:.82rem;font-weight:600;z-index:200;
+  transition:transform .3s ease;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.good{border-color:var(--green);color:var(--green);}
+.toast.bad{border-color:var(--red);color:var(--red);}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="hdr">
+    <div class="hdr-title">Bon<span>jour!</span></div>
+    <div class="xp-pill">⭐ <span id="xp-display">0</span> XP</div>
+  </div>
+  <div>
+    <div class="streak-card">
+      <div>
+        <div class="streak-num" id="streak-num">0</div>
+        <div class="streak-lbl">Day streak 🔥</div>
+      </div>
+      <div style="font-size:3.5rem;">🔥</div>
+    </div>
+
+    <div class="section-cards" id="section-cards"></div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-lbl">Total learned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-acc">—</div>
+        <div class="stat-lbl">Accuracy</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DETAIL -->
+<div class="screen" id="screen-section">
+  <div class="back-row">
+    <button class="back-btn" onclick="switchScreen('home')">←</button>
+    <div class="sec-header-title" id="sec-detail-title"></div>
+  </div>
+  <div id="sec-detail-body"></div>
+</div>
+
+<!-- PRACTICE -->
+<div class="screen" id="screen-practice">
+  <div class="practice-hdr">
+    <button class="back-btn" onclick="endPractice()">←</button>
+    <div class="prog-track"><div class="prog-fill" id="q-prog" style="width:0%"></div></div>
+    <div class="q-ctr" id="q-ctr">1/10</div>
+  </div>
+  <div class="q-area" id="q-area"></div>
+</div>
+
+<!-- BROWSE WORDS -->
+<div class="screen" id="screen-words">
+  <div class="hdr">
+    <div class="hdr-title" style="font-size:1.3rem;">Browse <span>Words</span></div>
+  </div>
+  <div>
+    <input class="search-inp" id="search-inp" placeholder="🔍 Search…" oninput="filterWords()">
+    <div class="filter-row">
+      <button class="filter-chip active" data-cat="all" onclick="setCat('all',this)">All</button>
+      <button class="filter-chip" data-cat="common" onclick="setCat('common',this)">📚 Common</button>
+      <button class="filter-chip" data-cat="everyday" onclick="setCat('everyday',this)">💬 Everyday</button>
+      <button class="filter-chip" data-cat="practical" onclick="setCat('practical',this)">🌍 Practical</button>
+    </div>
+    <div class="words-list" id="words-list"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="result-screen" id="result-screen">
+  <div class="res-emoji" id="res-emoji">🎉</div>
+  <div class="res-title" id="res-title">Excellent!</div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-xp" id="res-xp">+50 XP</div>
+  <button class="res-btn" onclick="closeResult()">Continue →</button>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" data-s="home" onclick="switchScreen('home')">
+    <div class="nav-icon">🏠</div><div class="nav-label">Home</div>
+  </button>
+  <button class="nav-btn" data-s="words" onclick="switchScreen('words')">
+    <div class="nav-icon">📖</div><div class="nav-label">Browse</div>
+  </button>
+</nav>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+
+// SECTION 1: Top 1000 most common French words (sample of 200 here, expandable)
+const COMMON = [
+  {fr:"le",en:"the (m)",pos:"article",ex:"Le chat dort."},
+  {fr:"la",en:"the (f)",pos:"article",ex:"La porte est ouverte."},
+  {fr:"les",en:"the (pl)",pos:"article",ex:"Les enfants jouent."},
+  {fr:"un",en:"a (m)",pos:"article",ex:"Un homme marche."},
+  {fr:"une",en:"a (f)",pos:"article",ex:"Une femme lit."},
+  {fr:"des",en:"some (pl)",pos:"article",ex:"Des fleurs pour toi."},
+  {fr:"du",en:"some (m)",pos:"article",ex:"Je veux du pain."},
+  {fr:"ce",en:"this / it",pos:"pron",ex:"Ce n'est pas vrai."},
+  {fr:"cette",en:"this (f)",pos:"adj",ex:"Cette maison est belle."},
+  {fr:"ces",en:"these",pos:"adj",ex:"Ces livres sont bons."},
+  {fr:"mon",en:"my (m)",pos:"adj",ex:"Mon frere est grand."},
+  {fr:"ma",en:"my (f)",pos:"adj",ex:"Ma mere cuisine bien."},
+  {fr:"mes",en:"my (pl)",pos:"adj",ex:"Mes amis sont sympas."},
+  {fr:"ton",en:"your (m, inf)",pos:"adj",ex:"Ton chien est mignon."},
+  {fr:"ta",en:"your (f, inf)",pos:"adj",ex:"Ta chambre est grande."},
+  {fr:"son",en:"his / her (m)",pos:"adj",ex:"Son sac est lourd."},
+  {fr:"sa",en:"his / her (f)",pos:"adj",ex:"Sa voiture est rouge."},
+  {fr:"ses",en:"his / her (pl)",pos:"adj",ex:"Ses livres sont la."},
+  {fr:"notre",en:"our",pos:"adj",ex:"Notre maison est grande."},
+  {fr:"leur",en:"their",pos:"adj",ex:"C'est leur maison."},
+  {fr:"leurs",en:"their (pl)",pos:"adj",ex:"Leurs enfants jouent."},
+  {fr:"je",en:"I",pos:"pron",ex:"Je suis etudiant."},
+  {fr:"tu",en:"you (informal)",pos:"pron",ex:"Tu parles francais?"},
+  {fr:"il",en:"he / it",pos:"pron",ex:"Il mange une pomme."},
+  {fr:"elle",en:"she / it",pos:"pron",ex:"Elle chante bien."},
+  {fr:"nous",en:"we / us",pos:"pron",ex:"Nous allons a Paris."},
+  {fr:"vous",en:"you (formal/pl)",pos:"pron",ex:"Vous etes gentil."},
+  {fr:"ils",en:"they (m)",pos:"pron",ex:"Ils jouent au foot."},
+  {fr:"elles",en:"they (f)",pos:"pron",ex:"Elles arrivent demain."},
+  {fr:"on",en:"one / we (inf)",pos:"pron",ex:"On y va!"},
+  {fr:"me",en:"me / myself",pos:"pron",ex:"Il me regarde."},
+  {fr:"se",en:"oneself",pos:"pron",ex:"Il se leve tot."},
+  {fr:"lui",en:"him / her",pos:"pron",ex:"Je lui parle."},
+  {fr:"y",en:"there / it",pos:"pron",ex:"J'y vais demain."},
+  {fr:"qui",en:"who / which",pos:"pron",ex:"La femme qui chante."},
+  {fr:"que",en:"that / which",pos:"pron",ex:"Je sais que tu viens."},
+  {fr:"quoi",en:"what",pos:"pron",ex:"Quoi de neuf?"},
+  {fr:"rien",en:"nothing",pos:"pron",ex:"Je ne vois rien."},
+  {fr:"quelqu'un",en:"someone",pos:"pron",ex:"Quelqu'un est la."},
+  {fr:"quelque chose",en:"something",pos:"pron",ex:"Je cherche quelque chose."},
+  {fr:"personne",en:"nobody",pos:"pron",ex:"Personne ne sait."},
+  {fr:"etre",en:"to be",pos:"verb",ex:"Je veux etre heureux."},
+  {fr:"avoir",en:"to have",pos:"verb",ex:"J'ai un chien."},
+  {fr:"faire",en:"to do / make",pos:"verb",ex:"Je fais un gateau."},
+  {fr:"aller",en:"to go",pos:"verb",ex:"Je vais au marche."},
+  {fr:"voir",en:"to see",pos:"verb",ex:"Je veux te voir."},
+  {fr:"venir",en:"to come",pos:"verb",ex:"Tu viens avec moi?"},
+  {fr:"vouloir",en:"to want",pos:"verb",ex:"Je veux du pain."},
+  {fr:"pouvoir",en:"to be able to",pos:"verb",ex:"Je peux venir demain."},
+  {fr:"savoir",en:"to know",pos:"verb",ex:"Je ne sais pas."},
+  {fr:"dire",en:"to say",pos:"verb",ex:"Qu'est-ce que tu dis?"},
+  {fr:"parler",en:"to speak",pos:"verb",ex:"Tu parles francais?"},
+  {fr:"penser",en:"to think",pos:"verb",ex:"Je pense a toi."},
+  {fr:"trouver",en:"to find",pos:"verb",ex:"J'ai trouve mon sac."},
+  {fr:"donner",en:"to give",pos:"verb",ex:"Donne-moi ca."},
+  {fr:"prendre",en:"to take",pos:"verb",ex:"Prends le bus."},
+  {fr:"aimer",en:"to love / like",pos:"verb",ex:"J'aime la France."},
+  {fr:"passer",en:"to pass / spend",pos:"verb",ex:"Passe une bonne journee!"},
+  {fr:"mettre",en:"to put",pos:"verb",ex:"Mets le livre la."},
+  {fr:"rester",en:"to stay",pos:"verb",ex:"Je reste ici."},
+  {fr:"partir",en:"to leave",pos:"verb",ex:"Je pars demain."},
+  {fr:"sentir",en:"to feel / smell",pos:"verb",ex:"Je sens quelque chose."},
+  {fr:"tenir",en:"to hold",pos:"verb",ex:"Tiens la main."},
+  {fr:"tomber",en:"to fall",pos:"verb",ex:"Il est tombe."},
+  {fr:"appeler",en:"to call",pos:"verb",ex:"Je t'appelle ce soir."},
+  {fr:"regarder",en:"to watch / look",pos:"verb",ex:"Je regarde la tele."},
+  {fr:"entendre",en:"to hear",pos:"verb",ex:"J'entends de la musique."},
+  {fr:"demander",en:"to ask",pos:"verb",ex:"Je vais demander."},
+  {fr:"travailler",en:"to work",pos:"verb",ex:"Je travaille beaucoup."},
+  {fr:"arriver",en:"to arrive",pos:"verb",ex:"J'arrive dans 5 minutes."},
+  {fr:"comprendre",en:"to understand",pos:"verb",ex:"Je comprends maintenant."},
+  {fr:"connaitre",en:"to know (sb)",pos:"verb",ex:"Je connais Marie."},
+  {fr:"laisser",en:"to leave / let",pos:"verb",ex:"Laisse-moi tranquille."},
+  {fr:"ouvrir",en:"to open",pos:"verb",ex:"Ouvre la fenetre."},
+  {fr:"devenir",en:"to become",pos:"verb",ex:"Il veut devenir medecin."},
+  {fr:"suivre",en:"to follow",pos:"verb",ex:"Suis-moi!"},
+  {fr:"vivre",en:"to live",pos:"verb",ex:"Je vis a Lyon."},
+  {fr:"croire",en:"to believe",pos:"verb",ex:"Je crois que oui."},
+  {fr:"sortir",en:"to go out",pos:"verb",ex:"On sort ce soir?"},
+  {fr:"manger",en:"to eat",pos:"verb",ex:"On va manger ensemble?"},
+  {fr:"boire",en:"to drink",pos:"verb",ex:"Je veux boire du cafe."},
+  {fr:"dormir",en:"to sleep",pos:"verb",ex:"Je dois dormir tot."},
+  {fr:"ecouter",en:"to listen",pos:"verb",ex:"J'ecoute de la musique."},
+  {fr:"lire",en:"to read",pos:"verb",ex:"J'aime lire des livres."},
+  {fr:"ecrire",en:"to write",pos:"verb",ex:"J'ecris une lettre."},
+  {fr:"acheter",en:"to buy",pos:"verb",ex:"Je vais acheter du pain."},
+  {fr:"vendre",en:"to sell",pos:"verb",ex:"Il vend des fleurs."},
+  {fr:"oublier",en:"to forget",pos:"verb",ex:"N'oublie pas ton sac."},
+  {fr:"chercher",en:"to look for",pos:"verb",ex:"Je cherche mes cles."},
+  {fr:"chanter",en:"to sing",pos:"verb",ex:"Elle chante tres bien."},
+  {fr:"danser",en:"to dance",pos:"verb",ex:"Tu sais danser?"},
+  {fr:"courir",en:"to run",pos:"verb",ex:"Il court vite."},
+  {fr:"marcher",en:"to walk",pos:"verb",ex:"J'aime marcher le matin."},
+  {fr:"nager",en:"to swim",pos:"verb",ex:"Il nage bien."},
+  {fr:"jouer",en:"to play",pos:"verb",ex:"Les enfants jouent dehors."},
+  {fr:"gagner",en:"to win / earn",pos:"verb",ex:"On a gagne!"},
+  {fr:"perdre",en:"to lose",pos:"verb",ex:"J'ai perdu mes cles."},
+  {fr:"finir",en:"to finish",pos:"verb",ex:"J'ai fini mon travail."},
+  {fr:"commencer",en:"to start",pos:"verb",ex:"On commence a 9h."},
+  {fr:"monter",en:"to go up",pos:"verb",ex:"Montez dans le bus."},
+  {fr:"descendre",en:"to go down",pos:"verb",ex:"Je descends a la prochaine."},
+  {fr:"entrer",en:"to enter",pos:"verb",ex:"Entrez, s'il vous plait."},
+  {fr:"rentrer",en:"to go home",pos:"verb",ex:"Je rentre a la maison."},
+  {fr:"porter",en:"to carry / wear",pos:"verb",ex:"Il porte une veste rouge."},
+  {fr:"rire",en:"to laugh",pos:"verb",ex:"Il rit tout le temps."},
+  {fr:"pleurer",en:"to cry",pos:"verb",ex:"Pourquoi tu pleures?"},
+  {fr:"attendre",en:"to wait",pos:"verb",ex:"J'attends le bus."},
+  {fr:"repondre",en:"to answer",pos:"verb",ex:"Reponds a la question."},
+  {fr:"expliquer",en:"to explain",pos:"verb",ex:"Tu peux expliquer?"},
+  {fr:"montrer",en:"to show",pos:"verb",ex:"Montre-moi ca."},
+  {fr:"choisir",en:"to choose",pos:"verb",ex:"Choisis un dessert."},
+  {fr:"decider",en:"to decide",pos:"verb",ex:"Je dois decider."},
+  {fr:"essayer",en:"to try",pos:"verb",ex:"Essaie encore une fois."},
+  {fr:"utiliser",en:"to use",pos:"verb",ex:"Comment utiliser ca?"},
+  {fr:"changer",en:"to change",pos:"verb",ex:"J'ai change d'avis."},
+  {fr:"aider",en:"to help",pos:"verb",ex:"Peux-tu m'aider?"},
+  {fr:"apprendre",en:"to learn",pos:"verb",ex:"J'apprends le francais."},
+  {fr:"enseigner",en:"to teach",pos:"verb",ex:"Elle enseigne les maths."},
+  {fr:"voyager",en:"to travel",pos:"verb",ex:"J'adore voyager."},
+  {fr:"conduire",en:"to drive",pos:"verb",ex:"Il conduit bien."},
+  {fr:"cuisiner",en:"to cook",pos:"verb",ex:"J'adore cuisiner."},
+  {fr:"nettoyer",en:"to clean",pos:"verb",ex:"Je nettoie la maison."},
+  {fr:"fermer",en:"to close",pos:"verb",ex:"Ferme la porte."},
+  {fr:"inviter",en:"to invite",pos:"verb",ex:"Je t'invite a diner."},
+  {fr:"envoyer",en:"to send",pos:"verb",ex:"J'envoie un email."},
+  {fr:"recevoir",en:"to receive",pos:"verb",ex:"J'ai recu une lettre."},
+  {fr:"rever",en:"to dream",pos:"verb",ex:"J'ai reve de toi."},
+  {fr:"tomber amoureux",en:"to fall in love",pos:"verb",ex:"Il est tombe amoureux."},
+  {fr:"se marier",en:"to get married",pos:"verb",ex:"Ils vont se marier."},
+  {fr:"grandir",en:"to grow up",pos:"verb",ex:"Les enfants grandissent vite."},
+  {fr:"vieillir",en:"to grow old",pos:"verb",ex:"On vieillit tous."},
+  {fr:"naitre",en:"to be born",pos:"verb",ex:"Il est ne en mars."},
+  {fr:"mourir",en:"to die",pos:"verb",ex:"Les fleurs sont mortes."},
+  {fr:"peur",en:"fear",pos:"noun",ex:"J'ai peur du noir."},
+  {fr:"joie",en:"joy",pos:"noun",ex:"Quelle joie de te voir!"},
+  {fr:"amour",en:"love",pos:"noun",ex:"L'amour est aveugle."},
+  {fr:"colere",en:"anger",pos:"noun",ex:"Il est en colere."},
+  {fr:"tristesse",en:"sadness",pos:"noun",ex:"J'ai de la tristesse."},
+  {fr:"bonheur",en:"happiness",pos:"noun",ex:"Le bonheur est simple."},
+  {fr:"espoir",en:"hope",pos:"noun",ex:"J'ai espoir."},
+  {fr:"reve",en:"dream",pos:"noun",ex:"J'ai fait un beau reve."},
+  {fr:"souvenir",en:"memory / souvenir",pos:"noun",ex:"Un beau souvenir."},
+  {fr:"surprise",en:"surprise",pos:"noun",ex:"Quelle surprise!"},
+  {fr:"temps",en:"time / weather",pos:"noun",ex:"Je n'ai pas le temps."},
+  {fr:"jour",en:"day",pos:"noun",ex:"Bonne journee!"},
+  {fr:"nuit",en:"night",pos:"noun",ex:"Bonne nuit!"},
+  {fr:"matin",en:"morning",pos:"noun",ex:"Bonjour ce matin!"},
+  {fr:"soir",en:"evening",pos:"noun",ex:"A ce soir!"},
+  {fr:"apres-midi",en:"afternoon",pos:"noun",ex:"A cet apres-midi."},
+  {fr:"heure",en:"hour / time",pos:"noun",ex:"Quelle heure est-il?"},
+  {fr:"minute",en:"minute",pos:"noun",ex:"Une minute, s'il vous plait."},
+  {fr:"seconde",en:"second",pos:"noun",ex:"Attends une seconde."},
+  {fr:"semaine",en:"week",pos:"noun",ex:"La semaine prochaine."},
+  {fr:"mois",en:"month",pos:"noun",ex:"Le mois de juin."},
+  {fr:"annee",en:"year",pos:"noun",ex:"Bonne nouvelle annee!"},
+  {fr:"lundi",en:"Monday",pos:"noun",ex:"On se voit lundi."},
+  {fr:"mardi",en:"Tuesday",pos:"noun",ex:"Mardi prochain."},
+  {fr:"mercredi",en:"Wednesday",pos:"noun",ex:"Le mercredi matin."},
+  {fr:"jeudi",en:"Thursday",pos:"noun",ex:"Jeudi soir."},
+  {fr:"vendredi",en:"Friday",pos:"noun",ex:"Vendredi c'est festif!"},
+  {fr:"samedi",en:"Saturday",pos:"noun",ex:"Samedi je me repose."},
+  {fr:"dimanche",en:"Sunday",pos:"noun",ex:"Le brunch du dimanche."},
+  {fr:"janvier",en:"January",pos:"noun",ex:"Il fait froid en janvier."},
+  {fr:"fevrier",en:"February",pos:"noun",ex:"La Saint-Valentin en fevrier."},
+  {fr:"mars",en:"March",pos:"noun",ex:"Le printemps arrive en mars."},
+  {fr:"avril",en:"April",pos:"noun",ex:"En avril ne te decouvre pas."},
+  {fr:"mai",en:"May",pos:"noun",ex:"Les fleurs de mai."},
+  {fr:"juin",en:"June",pos:"noun",ex:"L'ete commence en juin."},
+  {fr:"juillet",en:"July",pos:"noun",ex:"Le 14 juillet, fete nationale."},
+  {fr:"aout",en:"August",pos:"noun",ex:"Vacances en aout."},
+  {fr:"septembre",en:"September",pos:"noun",ex:"La rentree en septembre."},
+  {fr:"octobre",en:"October",pos:"noun",ex:"Les feuilles tombent en octobre."},
+  {fr:"novembre",en:"November",pos:"noun",ex:"Il fait gris en novembre."},
+  {fr:"decembre",en:"December",pos:"noun",ex:"Noel est en decembre."},
+  {fr:"homme",en:"man",pos:"noun",ex:"L'homme sourit."},
+  {fr:"femme",en:"woman",pos:"noun",ex:"La femme chante."},
+  {fr:"enfant",en:"child",pos:"noun",ex:"L'enfant joue."},
+  {fr:"garcon",en:"boy",pos:"noun",ex:"Le garcon court."},
+  {fr:"fille",en:"girl / daughter",pos:"noun",ex:"La fille sourit."},
+  {fr:"bebe",en:"baby",pos:"noun",ex:"Le bebe dort."},
+  {fr:"ami",en:"friend",pos:"noun",ex:"Mon meilleur ami."},
+  {fr:"famille",en:"family",pos:"noun",ex:"Ma famille est grande."},
+  {fr:"pere",en:"father",pos:"noun",ex:"Mon pere travaille."},
+  {fr:"mere",en:"mother",pos:"noun",ex:"Ma mere cuisine bien."},
+  {fr:"frere",en:"brother",pos:"noun",ex:"Mon frere est grand."},
+  {fr:"soeur",en:"sister",pos:"noun",ex:"Ma soeur etudie."},
+  {fr:"fils",en:"son",pos:"noun",ex:"Mon fils a 5 ans."},
+  {fr:"grand-pere",en:"grandfather",pos:"noun",ex:"Mon grand-pere est sage."},
+  {fr:"grand-mere",en:"grandmother",pos:"noun",ex:"Ma grand-mere cuisine bien."},
+  {fr:"oncle",en:"uncle",pos:"noun",ex:"Mon oncle est drole."},
+  {fr:"tante",en:"aunt",pos:"noun",ex:"Ma tante habite a Nice."},
+  {fr:"cousin",en:"cousin",pos:"noun",ex:"Mon cousin est sympa."},
+  {fr:"mari",en:"husband",pos:"noun",ex:"Mon mari est gentil."},
+  {fr:"voisin",en:"neighbour",pos:"noun",ex:"Mon voisin est bruyant."},
+  {fr:"collegue",en:"colleague",pos:"noun",ex:"Mon collegue est sympa."},
+  {fr:"tete",en:"head",pos:"noun",ex:"J'ai mal a la tete."},
+  {fr:"visage",en:"face",pos:"noun",ex:"Un beau visage."},
+  {fr:"yeux",en:"eyes",pos:"noun",ex:"Ses yeux sont bleus."},
+  {fr:"oreille",en:"ear",pos:"noun",ex:"J'ai mal a l'oreille."},
+  {fr:"nez",en:"nose",pos:"noun",ex:"Il a un grand nez."},
+  {fr:"bouche",en:"mouth",pos:"noun",ex:"Ferme la bouche!"},
+  {fr:"dent",en:"tooth",pos:"noun",ex:"J'ai mal a la dent."},
+  {fr:"epaule",en:"shoulder",pos:"noun",ex:"Mal a l'epaule."},
+  {fr:"bras",en:"arm",pos:"noun",ex:"Il ouvre les bras."},
+  {fr:"main",en:"hand",pos:"noun",ex:"Donne-moi la main."},
+  {fr:"doigt",en:"finger",pos:"noun",ex:"Il montre du doigt."},
+  {fr:"jambe",en:"leg",pos:"noun",ex:"J'ai mal a la jambe."},
+  {fr:"pied",en:"foot",pos:"noun",ex:"J'ai mal au pied."},
+  {fr:"dos",en:"back",pos:"noun",ex:"J'ai mal au dos."},
+  {fr:"ventre",en:"stomach",pos:"noun",ex:"J'ai mal au ventre."},
+  {fr:"coeur",en:"heart",pos:"noun",ex:"Mon coeur bat vite."},
+  {fr:"maison",en:"house",pos:"noun",ex:"Ma maison est petite."},
+  {fr:"appartement",en:"apartment",pos:"noun",ex:"J'habite un appartement."},
+  {fr:"chambre",en:"bedroom",pos:"noun",ex:"Ma chambre est bleue."},
+  {fr:"cuisine",en:"kitchen",pos:"noun",ex:"La cuisine est propre."},
+  {fr:"salon",en:"living room",pos:"noun",ex:"On regarde la tele au salon."},
+  {fr:"jardin",en:"garden",pos:"noun",ex:"Le jardin est fleuri."},
+  {fr:"fenetre",en:"window",pos:"noun",ex:"Ouvre la fenetre."},
+  {fr:"porte",en:"door",pos:"noun",ex:"Ferme la porte."},
+  {fr:"toit",en:"roof",pos:"noun",ex:"Le toit est rouge."},
+  {fr:"mur",en:"wall",pos:"noun",ex:"Le mur est blanc."},
+  {fr:"table",en:"table",pos:"noun",ex:"Mets la table."},
+  {fr:"chaise",en:"chair",pos:"noun",ex:"Assieds-toi sur la chaise."},
+  {fr:"lit",en:"bed",pos:"noun",ex:"Je vais au lit."},
+  {fr:"canape",en:"sofa",pos:"noun",ex:"Je dors sur le canape."},
+  {fr:"lampe",en:"lamp",pos:"noun",ex:"Allume la lampe."},
+  {fr:"ville",en:"city",pos:"noun",ex:"Une belle ville."},
+  {fr:"village",en:"village",pos:"noun",ex:"Un petit village tranquille."},
+  {fr:"rue",en:"street",pos:"noun",ex:"Dans la rue."},
+  {fr:"pont",en:"bridge",pos:"noun",ex:"Le pont est beau."},
+  {fr:"parc",en:"park",pos:"noun",ex:"Je me promene au parc."},
+  {fr:"foret",en:"forest",pos:"noun",ex:"La foret est dense."},
+  {fr:"riviere",en:"river",pos:"noun",ex:"La riviere coule."},
+  {fr:"lac",en:"lake",pos:"noun",ex:"Le lac est calme."},
+  {fr:"montagne",en:"mountain",pos:"noun",ex:"J'adore la montagne."},
+  {fr:"plage",en:"beach",pos:"noun",ex:"On va a la plage?"},
+  {fr:"mer",en:"sea",pos:"noun",ex:"La mer est belle."},
+  {fr:"ile",en:"island",pos:"noun",ex:"Une ile paradisiaque."},
+  {fr:"ciel",en:"sky",pos:"noun",ex:"Le ciel est bleu."},
+  {fr:"soleil",en:"sun",pos:"noun",ex:"Le soleil brille."},
+  {fr:"lune",en:"moon",pos:"noun",ex:"La lune est pleine."},
+  {fr:"etoile",en:"star",pos:"noun",ex:"Les etoiles brillent."},
+  {fr:"nuage",en:"cloud",pos:"noun",ex:"Des nuages gris."},
+  {fr:"pluie",en:"rain",pos:"noun",ex:"Il y a de la pluie."},
+  {fr:"neige",en:"snow",pos:"noun",ex:"La neige tombe."},
+  {fr:"vent",en:"wind",pos:"noun",ex:"Le vent souffle fort."},
+  {fr:"printemps",en:"spring",pos:"noun",ex:"Le printemps arrive."},
+  {fr:"ete",en:"summer",pos:"noun",ex:"L'ete est chaud."},
+  {fr:"automne",en:"autumn",pos:"noun",ex:"L'automne est colore."},
+  {fr:"hiver",en:"winter",pos:"noun",ex:"L'hiver est froid."},
+  {fr:"eau",en:"water",pos:"noun",ex:"Un verre d'eau."},
+  {fr:"feu",en:"fire",pos:"noun",ex:"Le feu est chaud."},
+  {fr:"pain",en:"bread",pos:"noun",ex:"Une baguette de pain."},
+  {fr:"fromage",en:"cheese",pos:"noun",ex:"Un plateau de fromages."},
+  {fr:"viande",en:"meat",pos:"noun",ex:"Je ne mange pas de viande."},
+  {fr:"poisson",en:"fish",pos:"noun",ex:"Le poisson est frais."},
+  {fr:"poulet",en:"chicken",pos:"noun",ex:"Du poulet roti."},
+  {fr:"legume",en:"vegetable",pos:"noun",ex:"Mange tes legumes!"},
+  {fr:"fruit",en:"fruit",pos:"noun",ex:"Un fruit frais."},
+  {fr:"pomme",en:"apple",pos:"noun",ex:"Une pomme par jour."},
+  {fr:"orange",en:"orange (fruit)",pos:"noun",ex:"Un jus d'orange."},
+  {fr:"citron",en:"lemon",pos:"noun",ex:"Du jus de citron."},
+  {fr:"fraise",en:"strawberry",pos:"noun",ex:"Des fraises au sucre."},
+  {fr:"tomate",en:"tomato",pos:"noun",ex:"Une salade tomate."},
+  {fr:"carotte",en:"carrot",pos:"noun",ex:"De la soupe de carottes."},
+  {fr:"sel",en:"salt",pos:"noun",ex:"Passe-moi le sel."},
+  {fr:"sucre",en:"sugar",pos:"noun",ex:"Un cafe sans sucre."},
+  {fr:"beurre",en:"butter",pos:"noun",ex:"Du beurre sur le pain."},
+  {fr:"lait",en:"milk",pos:"noun",ex:"Un verre de lait."},
+  {fr:"oeuf",en:"egg",pos:"noun",ex:"Un oeuf a la coque."},
+  {fr:"riz",en:"rice",pos:"noun",ex:"Du riz basmati."},
+  {fr:"pates",en:"pasta",pos:"noun",ex:"Des pates bolognaise."},
+  {fr:"soupe",en:"soup",pos:"noun",ex:"Une soupe chaude."},
+  {fr:"gateau",en:"cake",pos:"noun",ex:"Un gateau au chocolat."},
+  {fr:"chocolat",en:"chocolate",pos:"noun",ex:"J'adore le chocolat."},
+  {fr:"glace",en:"ice cream",pos:"noun",ex:"Une glace a la vanille."},
+  {fr:"cafe",en:"coffee / cafe",pos:"noun",ex:"Un cafe noir."},
+  {fr:"the",en:"tea",pos:"noun",ex:"Un the au citron."},
+  {fr:"jus",en:"juice",pos:"noun",ex:"Un jus de fruits."},
+  {fr:"vin",en:"wine",pos:"noun",ex:"Un verre de vin."},
+  {fr:"biere",en:"beer",pos:"noun",ex:"Une biere bien fraiche."},
+  {fr:"voiture",en:"car",pos:"noun",ex:"Ma voiture est rouge."},
+  {fr:"velo",en:"bicycle",pos:"noun",ex:"Je fais du velo."},
+  {fr:"avion",en:"plane",pos:"noun",ex:"Je prends l'avion."},
+  {fr:"bateau",en:"boat",pos:"noun",ex:"Un bateau sur la mer."},
+  {fr:"telephone",en:"phone",pos:"noun",ex:"Mon telephone est mort."},
+  {fr:"ordinateur",en:"computer",pos:"noun",ex:"Mon ordinateur est lent."},
+  {fr:"television",en:"television",pos:"noun",ex:"Je regarde la television."},
+  {fr:"livre",en:"book",pos:"noun",ex:"Ce livre est interessant."},
+  {fr:"sac",en:"bag",pos:"noun",ex:"Mon sac est lourd."},
+  {fr:"cle",en:"key",pos:"noun",ex:"J'ai perdu mes cles."},
+  {fr:"argent",en:"money",pos:"noun",ex:"Je n'ai pas d'argent."},
+  {fr:"prix",en:"price",pos:"noun",ex:"Quel est le prix?"},
+  {fr:"magasin",en:"shop",pos:"noun",ex:"Le magasin est ouvert."},
+  {fr:"marche",en:"market",pos:"noun",ex:"Le marche du dimanche."},
+  {fr:"travail",en:"work",pos:"noun",ex:"J'ai beaucoup de travail."},
+  {fr:"bureau",en:"office / desk",pos:"noun",ex:"Je travaille au bureau."},
+  {fr:"ecole",en:"school",pos:"noun",ex:"Les enfants vont a l'ecole."},
+  {fr:"universite",en:"university",pos:"noun",ex:"Je vais a l'universite."},
+  {fr:"professeur",en:"teacher",pos:"noun",ex:"Mon professeur est sympa."},
+  {fr:"etudiant",en:"student",pos:"noun",ex:"Je suis etudiant."},
+  {fr:"cours",en:"lesson / course",pos:"noun",ex:"J'ai cours a 9h."},
+  {fr:"examen",en:"exam",pos:"noun",ex:"J'ai un examen demain."},
+  {fr:"medecin",en:"doctor",pos:"noun",ex:"J'ai besoin d'un medecin."},
+  {fr:"hopital",en:"hospital",pos:"noun",ex:"Je vais a l'hopital."},
+  {fr:"pharmacie",en:"pharmacy",pos:"noun",ex:"Ou est la pharmacie?"},
+  {fr:"sport",en:"sport",pos:"noun",ex:"Tu fais du sport?"},
+  {fr:"football",en:"football",pos:"noun",ex:"Je joue au football."},
+  {fr:"musique",en:"music",pos:"noun",ex:"J'adore la musique."},
+  {fr:"film",en:"film / movie",pos:"noun",ex:"On regarde un film?"},
+  {fr:"chanson",en:"song",pos:"noun",ex:"Ma chanson preferee."},
+  {fr:"voyage",en:"trip / travel",pos:"noun",ex:"Un beau voyage."},
+  {fr:"vacances",en:"holidays",pos:"noun",ex:"Bonnes vacances!"},
+  {fr:"monde",en:"world",pos:"noun",ex:"Le monde est grand."},
+  {fr:"pays",en:"country",pos:"noun",ex:"Mon pays natal."},
+  {fr:"langue",en:"language",pos:"noun",ex:"Quelle langue parles-tu?"},
+  {fr:"histoire",en:"history / story",pos:"noun",ex:"C'est une belle histoire."},
+  {fr:"idee",en:"idea",pos:"noun",ex:"Bonne idee!"},
+  {fr:"probleme",en:"problem",pos:"noun",ex:"Pas de probleme!"},
+  {fr:"question",en:"question",pos:"noun",ex:"J'ai une question."},
+  {fr:"reponse",en:"answer",pos:"noun",ex:"Je cherche une reponse."},
+  {fr:"mot",en:"word",pos:"noun",ex:"Quel est ce mot?"},
+  {fr:"verite",en:"truth",pos:"noun",ex:"Dis la verite."},
+  {fr:"choix",en:"choice",pos:"noun",ex:"C'est ton choix."},
+  {fr:"chance",en:"luck",pos:"noun",ex:"Bonne chance!"},
+  {fr:"erreur",en:"mistake",pos:"noun",ex:"J'ai fait une erreur."},
+  {fr:"succes",en:"success",pos:"noun",ex:"C'est un grand succes."},
+  {fr:"effort",en:"effort",pos:"noun",ex:"Fais un effort."},
+  {fr:"exemple",en:"example",pos:"noun",ex:"Par exemple."},
+  {fr:"petit",en:"small",pos:"adj",ex:"Un petit cafe."},
+  {fr:"grand",en:"big / tall",pos:"adj",ex:"Un grand arbre."},
+  {fr:"bon",en:"good",pos:"adj",ex:"C'est tres bon!"},
+  {fr:"mauvais",en:"bad",pos:"adj",ex:"C'est mauvais."},
+  {fr:"beau",en:"beautiful",pos:"adj",ex:"Quelle belle journee!"},
+  {fr:"laid",en:"ugly",pos:"adj",ex:"Ce batiment est laid."},
+  {fr:"vieux",en:"old",pos:"adj",ex:"Un vieux chateau."},
+  {fr:"jeune",en:"young",pos:"adj",ex:"Un jeune homme."},
+  {fr:"nouveau",en:"new",pos:"adj",ex:"Un nouveau depart."},
+  {fr:"long",en:"long",pos:"adj",ex:"Une longue route."},
+  {fr:"court",en:"short",pos:"adj",ex:"Un film court."},
+  {fr:"haut",en:"high / tall",pos:"adj",ex:"Un batiment tres haut."},
+  {fr:"bas",en:"low",pos:"adj",ex:"Une voix basse."},
+  {fr:"large",en:"wide",pos:"adj",ex:"Une large avenue."},
+  {fr:"lourd",en:"heavy",pos:"adj",ex:"Ce sac est lourd."},
+  {fr:"leger",en:"light",pos:"adj",ex:"Un sac leger."},
+  {fr:"chaud",en:"hot / warm",pos:"adj",ex:"Il fait chaud."},
+  {fr:"froid",en:"cold",pos:"adj",ex:"J'ai froid."},
+  {fr:"fort",en:"strong",pos:"adj",ex:"Il est fort."},
+  {fr:"faible",en:"weak",pos:"adj",ex:"Je me sens faible."},
+  {fr:"rapide",en:"fast",pos:"adj",ex:"Un train rapide."},
+  {fr:"lent",en:"slow",pos:"adj",ex:"Un repas lent."},
+  {fr:"facile",en:"easy",pos:"adj",ex:"C'est facile."},
+  {fr:"difficile",en:"difficult",pos:"adj",ex:"C'est difficile."},
+  {fr:"important",en:"important",pos:"adj",ex:"C'est important."},
+  {fr:"interessant",en:"interesting",pos:"adj",ex:"C'est interessant."},
+  {fr:"ennuyeux",en:"boring",pos:"adj",ex:"Ce film est ennuyeux."},
+  {fr:"drole",en:"funny",pos:"adj",ex:"Il est tres drole."},
+  {fr:"sympa",en:"nice / friendly",pos:"adj",ex:"Elle est tres sympa."},
+  {fr:"gentil",en:"kind",pos:"adj",ex:"Tu es gentil."},
+  {fr:"mechant",en:"mean / wicked",pos:"adj",ex:"Ne sois pas mechant."},
+  {fr:"intelligent",en:"intelligent",pos:"adj",ex:"Un eleve intelligent."},
+  {fr:"sage",en:"wise / well-behaved",pos:"adj",ex:"Sois sage!"},
+  {fr:"calme",en:"calm",pos:"adj",ex:"Reste calme."},
+  {fr:"nerveux",en:"nervous",pos:"adj",ex:"Je suis nerveux."},
+  {fr:"heureux",en:"happy",pos:"adj",ex:"Je suis heureux."},
+  {fr:"triste",en:"sad",pos:"adj",ex:"Il est triste."},
+  {fr:"fatigue",en:"tired",pos:"adj",ex:"Je suis fatigue."},
+  {fr:"malade",en:"sick",pos:"adj",ex:"Je suis malade."},
+  {fr:"libre",en:"free",pos:"adj",ex:"Je suis libre ce soir."},
+  {fr:"occupe",en:"busy",pos:"adj",ex:"Je suis tres occupe."},
+  {fr:"ouvert",en:"open",pos:"adj",ex:"Le magasin est ouvert."},
+  {fr:"ferme",en:"closed",pos:"adj",ex:"C'est ferme."},
+  {fr:"propre",en:"clean",pos:"adj",ex:"C'est propre."},
+  {fr:"sale",en:"dirty",pos:"adj",ex:"Tes mains sont sales."},
+  {fr:"plein",en:"full",pos:"adj",ex:"Mon verre est plein."},
+  {fr:"vide",en:"empty",pos:"adj",ex:"La bouteille est vide."},
+  {fr:"vrai",en:"true",pos:"adj",ex:"C'est vrai?"},
+  {fr:"faux",en:"false",pos:"adj",ex:"C'est faux."},
+  {fr:"blanc",en:"white",pos:"adj",ex:"Un chat blanc."},
+  {fr:"noir",en:"black",pos:"adj",ex:"Un chien noir."},
+  {fr:"rouge",en:"red",pos:"adj",ex:"Une robe rouge."},
+  {fr:"bleu",en:"blue",pos:"adj",ex:"Le ciel est bleu."},
+  {fr:"vert",en:"green",pos:"adj",ex:"L'herbe est verte."},
+  {fr:"jaune",en:"yellow",pos:"adj",ex:"Un tournesol jaune."},
+  {fr:"rose",en:"pink",pos:"adj",ex:"Une robe rose."},
+  {fr:"violet",en:"purple",pos:"adj",ex:"Des fleurs violettes."},
+  {fr:"gris",en:"grey",pos:"adj",ex:"Un ciel gris."},
+  {fr:"marron",en:"brown",pos:"adj",ex:"Des yeux marron."},
+  {fr:"de",en:"of / from",pos:"prep",ex:"Je viens de Paris."},
+  {fr:"a",en:"at / to",pos:"prep",ex:"Je vais a Paris."},
+  {fr:"en",en:"in / by",pos:"prep",ex:"Je vis en France."},
+  {fr:"pour",en:"for",pos:"prep",ex:"C'est pour toi."},
+  {fr:"dans",en:"in / inside",pos:"prep",ex:"Le livre est dans le sac."},
+  {fr:"sur",en:"on",pos:"prep",ex:"Le livre est sur la table."},
+  {fr:"sous",en:"under",pos:"prep",ex:"Sous la table."},
+  {fr:"avec",en:"with",pos:"prep",ex:"Je viens avec toi."},
+  {fr:"sans",en:"without",pos:"prep",ex:"Cafe sans sucre."},
+  {fr:"par",en:"by / through",pos:"prep",ex:"Il passe par la."},
+  {fr:"entre",en:"between",pos:"prep",ex:"Entre toi et moi."},
+  {fr:"avant",en:"before",pos:"prep",ex:"Avant le dejeuner."},
+  {fr:"apres",en:"after",pos:"prep",ex:"Apres le diner."},
+  {fr:"depuis",en:"since / for",pos:"prep",ex:"Depuis trois ans."},
+  {fr:"pendant",en:"during",pos:"prep",ex:"Pendant les vacances."},
+  {fr:"vers",en:"towards",pos:"prep",ex:"Vers la gare."},
+  {fr:"contre",en:"against",pos:"prep",ex:"Contre le mur."},
+  {fr:"chez",en:"at the home of",pos:"prep",ex:"Je vais chez Marie."},
+  {fr:"selon",en:"according to",pos:"prep",ex:"Selon moi."},
+  {fr:"et",en:"and",pos:"conj",ex:"Toi et moi."},
+  {fr:"mais",en:"but",pos:"conj",ex:"Je veux, mais je ne peux pas."},
+  {fr:"ou",en:"or",pos:"conj",ex:"The ou cafe?"},
+  {fr:"donc",en:"so / therefore",pos:"conj",ex:"Je pense, donc je suis."},
+  {fr:"car",en:"because / for",pos:"conj",ex:"Je reste car il pleut."},
+  {fr:"si",en:"if",pos:"conj",ex:"Si tu veux."},
+  {fr:"quand",en:"when",pos:"conj",ex:"Quand tu arrives."},
+  {fr:"comme",en:"as / like",pos:"conj",ex:"Doux comme le miel."},
+  {fr:"parce que",en:"because",pos:"conj",ex:"Je reste parce que j'aime ca."},
+  {fr:"alors",en:"then / so",pos:"conj",ex:"Alors, qu'est-ce qu'on fait?"},
+  {fr:"tres",en:"very",pos:"adv",ex:"C'est tres bon."},
+  {fr:"bien",en:"well / good",pos:"adv",ex:"Je vais tres bien."},
+  {fr:"plus",en:"more",pos:"adv",ex:"Je veux plus de cafe."},
+  {fr:"moins",en:"less",pos:"adv",ex:"Un peu moins."},
+  {fr:"aussi",en:"also / too",pos:"adv",ex:"Moi aussi, j'aime ca."},
+  {fr:"encore",en:"again / still",pos:"adv",ex:"Tu veux encore du cafe?"},
+  {fr:"toujours",en:"always",pos:"adv",ex:"Je t'aimerai toujours."},
+  {fr:"jamais",en:"never",pos:"adv",ex:"Je ne mens jamais."},
+  {fr:"souvent",en:"often",pos:"adv",ex:"Je mange souvent ici."},
+  {fr:"parfois",en:"sometimes",pos:"adv",ex:"Parfois je sors."},
+  {fr:"maintenant",en:"now",pos:"adv",ex:"Faisons-le maintenant."},
+  {fr:"bientot",en:"soon",pos:"adv",ex:"A bientot!"},
+  {fr:"deja",en:"already",pos:"adv",ex:"Tu as deja mange?"},
+  {fr:"enfin",en:"finally",pos:"adv",ex:"Enfin tu arrives!"},
+  {fr:"peut-etre",en:"maybe",pos:"adv",ex:"Peut-etre demain."},
+  {fr:"surtout",en:"especially",pos:"adv",ex:"Surtout pas ca!"},
+  {fr:"presque",en:"almost",pos:"adv",ex:"C'est presque fini."},
+  {fr:"vraiment",en:"really",pos:"adv",ex:"C'est vraiment bon."},
+  {fr:"seulement",en:"only",pos:"adv",ex:"Seulement cinq minutes."},
+  {fr:"trop",en:"too much",pos:"adv",ex:"C'est trop cher."},
+  {fr:"assez",en:"enough",pos:"adv",ex:"J'en ai assez."},
+  {fr:"beaucoup",en:"a lot",pos:"adv",ex:"Merci beaucoup!"},
+  {fr:"peu",en:"little / few",pos:"adv",ex:"Un peu de sel."},
+  {fr:"ensemble",en:"together",pos:"adv",ex:"Allons-y ensemble."},
+  {fr:"ici",en:"here",pos:"adv",ex:"Venez ici."},
+  {fr:"la",en:"there",pos:"adv",ex:"C'est la."},
+  {fr:"partout",en:"everywhere",pos:"adv",ex:"Je le cherche partout."},
+  {fr:"ou",en:"where",pos:"adv",ex:"Ou est la gare?"},
+  {fr:"comment",en:"how",pos:"adv",ex:"Comment allez-vous?"},
+  {fr:"pourquoi",en:"why",pos:"adv",ex:"Pourquoi tu pleures?"},
+  {fr:"combien",en:"how much / many",pos:"adv",ex:"Combien ca coute?"},
+  {fr:"loin",en:"far",pos:"adv",ex:"C'est loin d'ici?"},
+  {fr:"pres",en:"near",pos:"adv",ex:"L'hotel est pres."},
+  {fr:"vite",en:"fast / quickly",pos:"adv",ex:"Parle moins vite!"},
+  {fr:"lentement",en:"slowly",pos:"adv",ex:"Parlez lentement."},
+  {fr:"un",en:"one",pos:"num",ex:"Un seul billet."},
+  {fr:"deux",en:"two",pos:"num",ex:"J'ai deux enfants."},
+  {fr:"trois",en:"three",pos:"num",ex:"Trois cafes."},
+  {fr:"quatre",en:"four",pos:"num",ex:"Quatre saisons."},
+  {fr:"cinq",en:"five",pos:"num",ex:"Cinq minutes."},
+  {fr:"six",en:"six",pos:"num",ex:"Six oeufs."},
+  {fr:"sept",en:"seven",pos:"num",ex:"Sept jours."},
+  {fr:"huit",en:"eight",pos:"num",ex:"Huit heures du soir."},
+  {fr:"neuf",en:"nine",pos:"num",ex:"Neuf euros."},
+  {fr:"dix",en:"ten",pos:"num",ex:"Dix personnes."},
+  {fr:"onze",en:"eleven",pos:"num",ex:"Onze heures."},
+  {fr:"douze",en:"twelve",pos:"num",ex:"Douze mois."},
+  {fr:"vingt",en:"twenty",pos:"num",ex:"Vingt ans."},
+  {fr:"trente",en:"thirty",pos:"num",ex:"Trente minutes."},
+  {fr:"cent",en:"hundred",pos:"num",ex:"Cent euros."},
+  {fr:"mille",en:"thousand",pos:"num",ex:"Mille mercis."},
+  {fr:"premier",en:"first",pos:"adj",ex:"Le premier jour."},
+  {fr:"deuxieme",en:"second",pos:"adj",ex:"Le deuxieme etage."},
+  {fr:"troisieme",en:"third",pos:"adj",ex:"Le troisieme prix."},
+  {fr:"dernier",en:"last",pos:"adj",ex:"La derniere fois."},
+]
+
+// SECTION 2: Everyday phrases & conversational
+const EVERYDAY = [
+  {fr:"Bonjour",en:"Hello / Good morning",pos:"greeting",ex:"Bonjour, comment allez-vous?",exEn:"Hello, how are you?"},
+  {fr:"Bonsoir",en:"Good evening",pos:"greeting",ex:"Bonsoir tout le monde!"},
+  {fr:"Bonne nuit",en:"Good night",pos:"greeting",ex:"Bonne nuit, dors bien."},
+  {fr:"Au revoir",en:"Goodbye",pos:"phrase",ex:"Au revoir, à bientôt!"},
+  {fr:"À bientôt",en:"See you soon",pos:"phrase",ex:"À bientôt, mon ami!"},
+  {fr:"À demain",en:"See you tomorrow",pos:"phrase",ex:"À demain matin!"},
+  {fr:"Salut",en:"Hi / Bye (informal)",pos:"greeting",ex:"Salut, ça va?"},
+  {fr:"Merci",en:"Thank you",pos:"phrase",ex:"Merci beaucoup!",exEn:"Thank you very much!"},
+  {fr:"Merci beaucoup",en:"Thank you very much",pos:"phrase",ex:"Merci beaucoup pour tout."},
+  {fr:"De rien",en:"You're welcome",pos:"phrase",ex:"Merci! — De rien!"},
+  {fr:"S'il vous plaît",en:"Please (formal)",pos:"phrase",ex:"Un café, s'il vous plaît."},
+  {fr:"S'il te plaît",en:"Please (informal)",pos:"phrase",ex:"Aide-moi, s'il te plaît."},
+  {fr:"Excusez-moi",en:"Excuse me (formal)",pos:"phrase",ex:"Excusez-moi, où est la gare?"},
+  {fr:"Pardon",en:"Sorry / Pardon",pos:"phrase",ex:"Pardon, je n'ai pas entendu."},
+  {fr:"Je suis désolé",en:"I'm sorry",pos:"phrase",ex:"Je suis désolé pour ça."},
+  {fr:"Comment allez-vous?",en:"How are you? (formal)",pos:"question",ex:"Comment allez-vous aujourd'hui?"},
+  {fr:"Ça va?",en:"How's it going?",pos:"question",ex:"Salut! Ça va?"},
+  {fr:"Ça va bien",en:"I'm doing well",pos:"phrase",ex:"Ça va bien, merci!"},
+  {fr:"Comme ci comme ça",en:"So-so",pos:"phrase",ex:"Ça va? — Comme ci comme ça."},
+  {fr:"Je m'appelle...",en:"My name is...",pos:"phrase",ex:"Je m'appelle Marie."},
+  {fr:"Comment tu t'appelles?",en:"What's your name?",pos:"question",ex:"Comment tu t'appelles?"},
+  {fr:"Enchanté",en:"Nice to meet you",pos:"phrase",ex:"Enchanté de vous rencontrer."},
+  {fr:"D'accord",en:"OK / Agreed",pos:"phrase",ex:"D'accord, on y va!"},
+  {fr:"Bien sûr",en:"Of course",pos:"phrase",ex:"Bien sûr, pas de problème."},
+  {fr:"Peut-être",en:"Maybe / Perhaps",pos:"phrase",ex:"Peut-être ce soir."},
+  {fr:"Je ne sais pas",en:"I don't know",pos:"phrase",ex:"Je ne sais pas la réponse."},
+  {fr:"Je comprends",en:"I understand",pos:"phrase",ex:"Oui, je comprends."},
+  {fr:"Je ne comprends pas",en:"I don't understand",pos:"phrase",ex:"Désolé, je ne comprends pas."},
+  {fr:"Répétez s'il vous plaît",en:"Please repeat",pos:"phrase",ex:"Pouvez-vous répéter?"},
+  {fr:"Parlez plus lentement",en:"Speak more slowly",pos:"phrase",ex:"Parlez plus lentement, s'il vous plaît."},
+  {fr:"Je parle un peu français",en:"I speak a little French",pos:"phrase",ex:"Je parle un peu français."},
+  {fr:"Parlez-vous anglais?",en:"Do you speak English?",pos:"question",ex:"Parlez-vous anglais?"},
+  {fr:"Qu'est-ce que c'est?",en:"What is this?",pos:"question",ex:"Qu'est-ce que c'est?"},
+  {fr:"C'est quoi?",en:"What is it? (informal)",pos:"question",ex:"C'est quoi ce truc?"},
+  {fr:"Où est...?",en:"Where is...?",pos:"question",ex:"Où est la pharmacie?"},
+  {fr:"Combien ça coûte?",en:"How much does it cost?",pos:"question",ex:"Combien ça coûte?"},
+  {fr:"C'est trop cher",en:"It's too expensive",pos:"phrase",ex:"C'est trop cher pour moi."},
+  {fr:"C'est parfait",en:"It's perfect",pos:"phrase",ex:"C'est parfait, merci!"},
+  {fr:"C'est délicieux",en:"It's delicious",pos:"phrase",ex:"C'est délicieux!"},
+  {fr:"J'ai faim",en:"I'm hungry",pos:"phrase",ex:"J'ai faim, on mange?"},
+  {fr:"J'ai soif",en:"I'm thirsty",pos:"phrase",ex:"J'ai soif, tu as de l'eau?"},
+  {fr:"J'ai froid",en:"I'm cold",pos:"phrase",ex:"J'ai froid, tu as un manteau?"},
+  {fr:"J'ai chaud",en:"I'm hot",pos:"phrase",ex:"J'ai chaud, ouvre la fenêtre."},
+  {fr:"J'ai besoin de...",en:"I need...",pos:"phrase",ex:"J'ai besoin d'aide."},
+  {fr:"Je voudrais...",en:"I would like...",pos:"phrase",ex:"Je voudrais un café."},
+  {fr:"Il fait beau",en:"The weather is nice",pos:"phrase",ex:"Il fait beau aujourd'hui!"},
+  {fr:"Il pleut",en:"It's raining",pos:"phrase",ex:"Il pleut, prends un parapluie."},
+  {fr:"Quelle heure est-il?",en:"What time is it?",pos:"question",ex:"Quelle heure est-il?"},
+  {fr:"Bonne chance",en:"Good luck",pos:"phrase",ex:"Bonne chance pour ton examen!"},
+  {fr:"Félicitations",en:"Congratulations",pos:"phrase",ex:"Félicitations pour ton mariage!"},
+  {fr:"Santé!",en:"Cheers! / Bless you!",pos:"phrase",ex:"À ta santé!"},
+  {fr:"Allons-y",en:"Let's go",pos:"phrase",ex:"Allons-y, on est en retard!"},
+  {fr:"Attends",en:"Wait",pos:"phrase",ex:"Attends-moi, s'il te plaît!"},
+  {fr:"Aide-moi",en:"Help me",pos:"phrase",ex:"Aide-moi, s'il te plaît!"},
+  {fr:"Je t'aime",en:"I love you",pos:"phrase",ex:"Je t'aime de tout mon cœur."},
+  {fr:"Tu me manques",en:"I miss you",pos:"phrase",ex:"Tu me manques beaucoup."},
+  {fr:"Bonne journée",en:"Have a good day",pos:"phrase",ex:"Bonne journée à toi!"},
+  {fr:"Bonne semaine",en:"Have a good week",pos:"phrase",ex:"Bonne semaine et bon courage!"},
+  {fr:"Bon appétit",en:"Enjoy your meal",pos:"phrase",ex:"Bon appétit tout le monde!"},
+  {fr:"À votre santé",en:"To your health",pos:"phrase",ex:"À votre santé!"},
+  {fr:"Pas de problème",en:"No problem",pos:"phrase",ex:"Merci! — Pas de problème."},
+  {fr:"C'est la vie",en:"That's life",pos:"phrase",ex:"C'est la vie, que voulez-vous."},
+  {fr:"N'importe quoi",en:"Whatever / Nonsense",pos:"phrase",ex:"N'importe quoi, ce film!"},
+  {fr:"Tant pis",en:"Too bad / Never mind",pos:"phrase",ex:"Tant pis, on fera mieux."},
+  {fr:"Tant mieux",en:"So much the better",pos:"phrase",ex:"Tu as réussi? Tant mieux!"},
+  {fr:"Ça m'est égal",en:"I don't mind / I don't care",pos:"phrase",ex:"Thé ou café? — Ça m'est égal."},
+  {fr:"Je me débrouille",en:"I manage / I get by",pos:"phrase",ex:"Ton français? — Je me débrouille."},
+  {fr:"C'est dommage",en:"That's a shame",pos:"phrase",ex:"Tu pars déjà? C'est dommage."},
+  {fr:"Quelle surprise!",en:"What a surprise!",pos:"phrase",ex:"Quelle surprise de te voir ici!"},
+  {fr:"N'oublie pas",en:"Don't forget",pos:"phrase",ex:"N'oublie pas ton passeport."},
+  {fr:"Fais attention",en:"Be careful",pos:"phrase",ex:"Fais attention à la voiture!"},
+  {fr:"Dépêche-toi",en:"Hurry up",pos:"phrase",ex:"Dépêche-toi, on est en retard."},
+  {fr:"Calme-toi",en:"Calm down",pos:"phrase",ex:"Calme-toi, ce n'est pas grave."},
+  {fr:"Courage!",en:"Hang in there!",pos:"phrase",ex:"Courage, tu vas y arriver!"},
+  {fr:"Avec plaisir",en:"With pleasure",pos:"phrase",ex:"Veux-tu danser? — Avec plaisir!"},
+  {fr:"Je suis d'accord",en:"I agree",pos:"phrase",ex:"Je suis d'accord avec toi."},
+  {fr:"Je ne suis pas d'accord",en:"I disagree",pos:"phrase",ex:"Je ne suis pas d'accord."},
+  {fr:"À mon avis",en:"In my opinion",pos:"phrase",ex:"À mon avis, c'est une bonne idée."},
+  {fr:"C'est à dire",en:"That is to say",pos:"phrase",ex:"C'est à dire, en résumé..."},
+  {fr:"En fait",en:"In fact / Actually",pos:"phrase",ex:"En fait, j'ai changé d'avis."},
+  {fr:"Par exemple",en:"For example",pos:"phrase",ex:"Par exemple, le lundi."},
+];
+
+// SECTION 3: Practical / Travel vocab
+const PRACTICAL = [
+  {fr:"l'aéroport",en:"the airport",pos:"noun",ex:"L'aéroport est loin."},
+  {fr:"la gare",en:"the train station",pos:"noun",ex:"La gare est à gauche."},
+  {fr:"le train",en:"the train",pos:"noun",ex:"Le train arrive à 8h."},
+  {fr:"le bus",en:"the bus",pos:"noun",ex:"Je prends le bus."},
+  {fr:"le métro",en:"the metro / subway",pos:"noun",ex:"Le métro est rapide."},
+  {fr:"le taxi",en:"the taxi",pos:"noun",ex:"Appelez-moi un taxi."},
+  {fr:"la voiture",en:"the car",pos:"noun",ex:"Ma voiture est garée ici."},
+  {fr:"le billet",en:"the ticket",pos:"noun",ex:"Un billet aller-retour."},
+  {fr:"le passeport",en:"the passport",pos:"noun",ex:"Votre passeport, s'il vous plaît."},
+  {fr:"l'hôtel",en:"the hotel",pos:"noun",ex:"Je cherche un hôtel."},
+  {fr:"la chambre",en:"the room",pos:"noun",ex:"Je réserve une chambre."},
+  {fr:"la réservation",en:"the reservation",pos:"noun",ex:"J'ai une réservation."},
+  {fr:"le restaurant",en:"the restaurant",pos:"noun",ex:"On va au restaurant?"},
+  {fr:"le menu",en:"the menu",pos:"noun",ex:"Le menu, s'il vous plaît."},
+  {fr:"l'addition",en:"the bill",pos:"noun",ex:"L'addition, s'il vous plaît."},
+  {fr:"le café",en:"the café / coffee",pos:"noun",ex:"Un café au lait."},
+  {fr:"le vin",en:"the wine",pos:"noun",ex:"Un verre de vin rouge."},
+  {fr:"la bière",en:"the beer",pos:"noun",ex:"Une bière pression."},
+  {fr:"l'eau minérale",en:"mineral water",pos:"noun",ex:"Une eau minérale, s'il vous plaît."},
+  {fr:"le pain",en:"bread",pos:"noun",ex:"Une baguette de pain."},
+  {fr:"le fromage",en:"cheese",pos:"noun",ex:"Un plateau de fromages."},
+  {fr:"la viande",en:"meat",pos:"noun",ex:"Je ne mange pas de viande."},
+  {fr:"le poisson",en:"fish",pos:"noun",ex:"Le poisson est frais."},
+  {fr:"les légumes",en:"vegetables",pos:"noun",ex:"Plus de légumes, s'il vous plaît."},
+  {fr:"la pharmacie",en:"the pharmacy",pos:"noun",ex:"Où est la pharmacie?"},
+  {fr:"le médecin",en:"the doctor",pos:"noun",ex:"J'ai besoin d'un médecin."},
+  {fr:"l'hôpital",en:"the hospital",pos:"noun",ex:"L'hôpital est urgent."},
+  {fr:"la police",en:"the police",pos:"noun",ex:"Appelez la police!"},
+  {fr:"Au secours!",en:"Help!",pos:"phrase",ex:"Au secours, j'ai besoin d'aide!"},
+  {fr:"C'est une urgence",en:"It's an emergency",pos:"phrase",ex:"C'est une urgence, vite!"},
+  {fr:"Je suis perdu",en:"I'm lost",pos:"phrase",ex:"Je suis perdu, pouvez-vous m'aider?"},
+  {fr:"la banque",en:"the bank",pos:"noun",ex:"La banque est fermée."},
+  {fr:"le distributeur",en:"the ATM",pos:"noun",ex:"Où est le distributeur?"},
+  {fr:"la carte bancaire",en:"bank card / credit card",pos:"noun",ex:"Je paie par carte bancaire."},
+  {fr:"les toilettes",en:"the toilets",pos:"noun",ex:"Où sont les toilettes?"},
+  {fr:"le magasin",en:"the shop / store",pos:"noun",ex:"Le magasin est ouvert."},
+  {fr:"le supermarché",en:"the supermarket",pos:"noun",ex:"Je vais au supermarché."},
+  {fr:"le marché",en:"the market",pos:"noun",ex:"Le marché du dimanche."},
+  {fr:"ouvert",en:"open",pos:"adj",ex:"Le musée est ouvert."},
+  {fr:"fermé",en:"closed",pos:"adj",ex:"Le magasin est fermé."},
+  {fr:"gratuit",en:"free (no cost)",pos:"adj",ex:"L'entrée est gratuite."},
+  {fr:"interdit",en:"forbidden",pos:"adj",ex:"Stationnement interdit."},
+  {fr:"droite",en:"right",pos:"noun",ex:"Tournez à droite."},
+  {fr:"gauche",en:"left",pos:"noun",ex:"À gauche de la banque."},
+  {fr:"tout droit",en:"straight ahead",pos:"phrase",ex:"Continuez tout droit."},
+  {fr:"en face de",en:"opposite / across from",pos:"phrase",ex:"En face de la mairie."},
+  {fr:"à côté de",en:"next to",pos:"phrase",ex:"À côté du café."},
+  {fr:"près d'ici",en:"near here",pos:"phrase",ex:"Y a-t-il un hôtel près d'ici?"},
+  {fr:"loin d'ici",en:"far from here",pos:"phrase",ex:"C'est loin d'ici?"},
+  {fr:"le nord",en:"north",pos:"noun",ex:"Au nord de Paris."},
+  {fr:"le sud",en:"south",pos:"noun",ex:"Le sud de la France."},
+  {fr:"l'est",en:"east",pos:"noun",ex:"À l'est de Lyon."},
+  {fr:"l'ouest",en:"west",pos:"noun",ex:"La côte ouest."},
+  {fr:"combien de temps?",en:"how long?",pos:"question",ex:"Combien de temps pour y aller?"},
+  {fr:"à quelle heure?",en:"at what time?",pos:"question",ex:"À quelle heure part le train?"},
+  {fr:"le vol",en:"the flight",pos:"noun",ex:"Mon vol est à 10h."},
+  {fr:"l'embarquement",en:"boarding",pos:"noun",ex:"L'embarquement commence."},
+  {fr:"la valise",en:"the suitcase",pos:"noun",ex:"Ma valise est lourde."},
+  {fr:"le bagage",en:"the luggage",pos:"noun",ex:"Où sont les bagages?"},
+  {fr:"la douane",en:"customs",pos:"noun",ex:"Passez la douane ici."},
+  {fr:"le visa",en:"the visa",pos:"noun",ex:"Il faut un visa."},
+  {fr:"louer",en:"to rent",pos:"verb",ex:"Je veux louer une voiture."},
+  {fr:"réserver",en:"to book / reserve",pos:"verb",ex:"Je veux réserver une table."},
+  {fr:"payer",en:"to pay",pos:"verb",ex:"Comment voulez-vous payer?"},
+  {fr:"changer",en:"to change / exchange",pos:"verb",ex:"Je veux changer des euros."},
+  {fr:"Je suis allergique à",en:"I'm allergic to",pos:"phrase",ex:"Je suis allergique aux noix."},
+  {fr:"sans gluten",en:"gluten-free",pos:"phrase",ex:"Avez-vous des plats sans gluten?"},
+  {fr:"végétarien",en:"vegetarian",pos:"adj",ex:"Je suis végétarien."},
+  {fr:"la carte",en:"the map / menu",pos:"noun",ex:"Avez-vous une carte de la ville?"},
+  {fr:"le plan",en:"the map (city)",pos:"noun",ex:"Je cherche un plan du métro."},
+  {fr:"le monument",en:"the monument",pos:"noun",ex:"Quel monument visiter?"},
+  {fr:"le musée",en:"the museum",pos:"noun",ex:"Le musée est fermé le lundi."},
+  {fr:"l'église",en:"the church",pos:"noun",ex:"L'église est très belle."},
+  {fr:"la plage",en:"the beach",pos:"noun",ex:"On va à la plage?"},
+  {fr:"la montagne",en:"the mountain",pos:"noun",ex:"J'adore la montagne."},
+  {fr:"une photo",en:"a photo",pos:"noun",ex:"Pouvez-vous prendre une photo?"},
+  {fr:"Wi-Fi",en:"Wi-Fi",pos:"noun",ex:"Avez-vous le Wi-Fi?"},
+  {fr:"le chargeur",en:"the charger",pos:"noun",ex:"J'ai oublié mon chargeur."},
+  {fr:"la connexion",en:"the connection",pos:"noun",ex:"La connexion est lente."},
+];
+
+const SECTIONS = [
+  {
+    key:'common', name:'Top 500 Common Words', icon:'📚',
+    desc:'Core vocabulary — the building blocks of French',
+    color:'indigo', words: COMMON, dailyCount: 10,
+  },
+  {
+    key:'everyday', name:'Everyday Phrases', icon:'💬',
+    desc:'Real conversations — greetings, opinions & small talk',
+    color:'pink', words: EVERYDAY, dailyCount: 5,
+  },
+  {
+    key:'practical', name:'Practical & Travel', icon:'🌍',
+    desc:'Navigate real life — restaurants, transport & emergencies',
+    color:'green', words: PRACTICAL, dailyCount: 5,
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let S = {
+  xp:0, streak:0, lastDate:null,
+  learned:{common:[],everyday:[],practical:[]},
+  today:{common:[],everyday:[],practical:[]},
+  yesterday:{common:[],everyday:[],practical:[]},
+  lastAssigned:{common:null,everyday:null,practical:null},
+  totalCorrect:0, totalAnswered:0,
+  // Spaced repetition: {secKey_wordIdx: {interval, easeFactor, nextReview, reps}}
+  srCards:{},
+};
+
+// ── SPACED REPETITION (SM-2 algorithm) ──────────────────────
+// quality: 0=wrong, 1=hard, 2=easy
+function srUpdate(secKey, wordIdx, quality) {
+  const key = secKey+'_'+wordIdx;
+  let card = S.srCards[key] || {interval:1, easeFactor:2.5, nextReview:0, reps:0};
+  if(quality < 1) {
+    card.reps = 0; card.interval = 1;
+  } else {
+    if(card.reps === 0) card.interval = 1;
+    else if(card.reps === 1) card.interval = 3;
+    else card.interval = Math.round(card.interval * card.easeFactor);
+    card.reps++;
+    card.easeFactor = Math.max(1.3, card.easeFactor + (0.1 - (2-quality)*(0.08+(2-quality)*0.02)));
+  }
+  const now = Date.now();
+  card.nextReview = now + card.interval * 86400000;
+  S.srCards[key] = card;
+}
+
+function srGetDue(secKey) {
+  const now = Date.now();
+  const sec = SECTIONS.find(s=>s.key===secKey);
+  return sec.words.map((_,i)=>i).filter(i => {
+    const card = S.srCards[secKey+'_'+i];
+    return card && card.nextReview <= now && card.reps > 0;
+  });
+}
+
+function srGetStatus(secKey, wordIdx) {
+  const card = S.srCards[secKey+'_'+wordIdx];
+  if(!card || card.reps===0) return 'new';
+  const now = Date.now();
+  if(card.nextReview <= now) return 'due';
+  if(card.interval >= 7) return 'known';
+  return 'review';
+}
+
+function loadS(){ try{ const d=JSON.parse(localStorage.getItem('bonjour2')||'null'); if(d) S={...S,...d}; }catch{} }
+function saveS(){ localStorage.setItem('bonjour2',JSON.stringify(S)); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+
+function checkStreak(){
+  const t=today();
+  if(!S.lastDate){S.streak=1;S.lastDate=t;return;}
+  const diff=Math.round((new Date(t)-new Date(S.lastDate))/86400000);
+  if(diff===1){S.streak++;S.lastDate=t;}
+  else if(diff>1){S.streak=1;S.lastDate=t;}
+}
+
+function assignToday(){
+  const t=today();
+  SECTIONS.forEach(sec=>{
+    if(S.lastAssigned[sec.key]===t) return;
+    S.yesterday[sec.key]=S.today[sec.key]||[];
+    const pool=sec.words.map((_,i)=>i)
+      .filter(i=>!S.learned[sec.key].includes(i)&&!S.yesterday[sec.key].includes(i));
+    S.today[sec.key]=pool.slice(0,sec.dailyCount);
+    S.lastAssigned[sec.key]=t;
+  });
+  saveS();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SESSION
+// ═══════════════════════════════════════════════════════════════
+let session={qs:[],idx:0,correct:0,secKey:''};
+
+function buildQs(secKey,wordIds){
+  const qs=[];
+  wordIds.forEach(id=>{
+    const types=shuffle(['mc','fitb']);
+    types.forEach(t=>qs.push({secKey,wordId:id,type:t}));
+  });
+  return shuffle(qs).slice(0,12);
+}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
+
+function startSession(secKey,mode){
+  const sec=SECTIONS.find(s=>s.key===secKey);
+  let ids;
+  if(mode==='daily'){
+    const due = srGetDue(secKey);
+    ids=[...new Set([...S.today[secKey],...due,...S.yesterday[secKey].slice(0,2)])].filter(i=>i!==undefined);
+    if(!ids.length) ids=S.today[secKey];
+  } else if(mode==='review'){
+    ids = srGetDue(secKey);
+    if(!ids.length){showToast('No words due for review!','bad');return;}
+  } else {
+    const pool=[...new Set([...S.learned[secKey],...S.today[secKey]])];
+    ids=shuffle(pool).slice(0,8);
+    if(!ids.length) ids=S.today[secKey];
+  }
+  if(!ids.length){showToast('No words available!','bad');return;}
+  session={qs:buildQs(secKey,ids),idx:0,correct:0,secKey};
+  switchScreen('practice');
+  renderQ();
+}
+
+function renderQ(){
+  const total=session.qs.length;
+  const idx=session.idx;
+  document.getElementById('q-prog').style.width=((idx/total)*100)+'%';
+  document.getElementById('q-ctr').textContent=`${idx+1}/${total}`;
+  if(idx>=total){endSession();return;}
+  const q=session.qs[idx];
+  const sec=SECTIONS.find(s=>s.key===q.secKey);
+  const word=sec.words[q.wordId];
+  const area=document.getElementById('q-area');
+  if(q.type==='mc') renderMC(word,area,sec);
+  else renderFITB(word,area,sec);
+}
+
+// MC
+function renderMC(word,area,sec){
+  const wrongs=shuffle(sec.words.filter(w=>w!==word)).slice(0,3).map(w=>w.en);
+  const opts=shuffle([word.en,...wrongs]);
+  const exEn = word.exEn || '';
+  area.innerHTML=`
+    <div class="mc-q">
+      <div class="mc-prompt">What does this mean?</div>
+      <div class="mc-word">${word.fr}</div>
+      <div class="mc-type">${word.pos}</div>
+      <div class="mc-example">"${word.ex}"${exEn ? `<div class="mc-example-en">${exEn}</div>` : ''}</div>
+    </div>
+    <div class="mc-opts">
+      ${opts.map(o=>`<button class="mc-opt" onclick="checkMC(this,'${esc(o)}','${esc(word.en)}')">${o}<span></span></button>`).join('')}
+    </div>`;
+}
+
+function checkMC(btn,chosen,correct){
+  const ok=chosen===correct;
+  document.querySelectorAll('.mc-opt').forEach(b=>{
+    b.disabled=true;
+    const lbl=b.textContent.replace(/[✓✗]/g,'').trim();
+    if(lbl===correct){b.classList.add('correct');b.querySelector('span').textContent=' ✓';}
+    else if(lbl===chosen&&!ok){b.classList.add('wrong');b.querySelector('span').textContent=' ✗';}
+  });
+  S.totalAnswered++;
+  if(ok){session.correct++;S.totalCorrect++;markLearned();showToast('Correct! 🎉','good');}
+  else{markWrong();showToast(`Answer: ${correct}`,'bad');}
+  setTimeout(nextQ,1400);
+}
+
+// FITB
+function renderFITB(word,area,sec){
+  const sentence=word.ex;
+  let display=sentence.replace(new RegExp(word.fr.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'),'<span class="fitb-blank" id="fb"></span>');
+  if(display===sentence) display=sentence.replace(/\.$/,' ___.');
+  const exEn = word.exEn || '';
+  area.innerHTML=`
+    <div class="fitb-box">
+      <div class="fitb-lbl">Fill in the blank — "${word.en}"</div>
+      <div class="fitb-txt">${display}</div>
+      ${exEn ? `<div class="fitb-translation">${exEn}</div>` : ''}
+      <div class="fitb-row">
+        <input class="fitb-inp" id="fi" placeholder="Type in French…" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="go-btn" onclick="checkFITB('${esc(word.fr)}')">Go</button>
+      </div>
+      <div class="fitb-hint">Starts with "${word.fr[0]}"</div>
+      <div class="fitb-fb" id="ffb"></div>
+    </div>`;
+  document.getElementById('fi').addEventListener('keydown',e=>{if(e.key==='Enter') checkFITB(word.fr);});
+}
+
+function checkFITB(correct){
+  const inp=document.getElementById('fi');
+  if(!inp) return;
+  const ans=inp.value.trim().toLowerCase();
+  const ok=ans===correct.toLowerCase();
+  inp.classList.add(ok?'ok':'bad'); inp.disabled=true;
+  document.querySelector('.go-btn').disabled=true;
+  const fb=document.getElementById('ffb');
+  S.totalAnswered++;
+  if(ok){fb.textContent='✓ Parfait!';fb.className='fitb-fb ok';session.correct++;S.totalCorrect++;markLearned();}
+  else{fb.textContent=`✗ Answer: ${correct}`;fb.className='fitb-fb bad';}
+  setTimeout(nextQ,1600);
+}
+
+function markLearned(){
+  const q=session.qs[session.idx];
+  if(!S.learned[q.secKey].includes(q.wordId)) S.learned[q.secKey].push(q.wordId);
+  srUpdate(q.secKey, q.wordId, 2); // mark as easy/known
+}
+
+function markHard(){
+  const q=session.qs[session.idx];
+  srUpdate(q.secKey, q.wordId, 1);
+}
+
+function markWrong(){
+  const q=session.qs[session.idx];
+  srUpdate(q.secKey, q.wordId, 0);
+}
+
+function nextQ(){session.idx++;renderQ();}
+
+function endSession(){
+  const xp=session.correct*10;
+  S.xp+=xp; S.lastDate=today();
+  checkStreak(); saveS();
+  showResult(session.correct,session.qs.length,xp);
+}
+
+function showResult(c,t,xp){
+  const pct=Math.round((c/t)*100);
+  document.getElementById('res-emoji').textContent=pct>=80?'🎉':pct>=50?'💪':'📚';
+  document.getElementById('res-title').textContent=pct>=80?'Excellent!':pct>=50?'Good effort!':'Keep going!';
+  document.getElementById('res-sub').textContent=`${c} of ${t} correct (${pct}%)`;
+  document.getElementById('res-xp').textContent=`+${xp} XP earned`;
+  document.getElementById('result-screen').classList.add('show');
+}
+
+function closeResult(){
+  document.getElementById('result-screen').classList.remove('show');
+  switchScreen('section');
+  renderSectionDetail(session.secKey);
+}
+
+function endPractice(){
+  switchScreen('section');
+  renderSectionDetail(session.secKey);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCREENS
+// ═══════════════════════════════════════════════════════════════
+function switchScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const sc=document.getElementById('screen-'+name);
+  if(sc) sc.classList.add('active');
+  const nb=document.querySelector(`.nav-btn[data-s="${name}"]`);
+  if(nb) nb.classList.add('active');
+  if(name==='home') renderHome();
+  if(name==='words') renderWords();
+  window.scrollTo(0,0);
+}
+
+function renderHome(){
+  document.getElementById('xp-display').textContent=S.xp.toLocaleString();
+  document.getElementById('streak-num').textContent=S.streak;
+
+  // Section cards
+  const cards=document.getElementById('section-cards');
+  cards.innerHTML=SECTIONS.map(sec=>{
+    const learned=S.learned[sec.key].length;
+    const total=sec.words.length;
+    const pct=Math.round((learned/total)*100);
+    return `<div class="sec-card ${sec.key}" onclick="openSection('${sec.key}')">
+      <div class="sec-icon">${sec.icon}</div>
+      <div class="sec-info">
+        <div class="sec-name">${sec.name}</div>
+        <div class="sec-desc">${sec.desc}</div>
+        <div class="sec-prog">
+          <div class="sec-prog-bar"><div class="sec-prog-fill" style="width:${pct}%"></div></div>
+          <div class="sec-count">${learned} / ${total} words · ${pct}%</div>
+        </div>
+      </div>
+      <div style="font-size:1.3rem;color:var(--muted);">›</div>
+    </div>`;
+  }).join('');
+
+  // Stats
+  const totalLearned=Object.values(S.learned).flat().length;
+  document.getElementById('stat-total').textContent=totalLearned;
+  const acc=S.totalAnswered>0?Math.round((S.totalCorrect/S.totalAnswered)*100)+'%':'—';
+  document.getElementById('stat-acc').textContent=acc;
+}
+
+function openSection(key){
+  switchScreen('section');
+  renderSectionDetail(key);
+}
+
+function renderSectionDetail(key){
+  const sec=SECTIONS.find(s=>s.key===key);
+  document.getElementById('sec-detail-title').textContent=sec.icon+' '+sec.name;
+
+  const todayIds=S.today[key]||[];
+  const yesterdayIds=S.yesterday[key]||[];
+  const learnedIds=S.learned[key]||[];
+
+  let html=``;
+
+  // Today's words
+  if(todayIds.length){
+    html+=`<div class="daily-box">
+      <div class="box-label">Today's ${sec.dailyCount} words</div>
+      <div class="word-pills">
+        ${todayIds.map(id=>{
+          const w=sec.words[id];
+          const learned=learnedIds.includes(id);
+          return `<div class="word-pill ${learned?'pill-learned':''}">
+            <div class="pill-fr">${w.fr}</div>
+            <div class="pill-en">${w.en}</div>
+            <div class="pill-pos">${w.pos}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Yesterday
+  if(yesterdayIds.length){
+    html+=`<div class="daily-box">
+      <div class="box-label">Yesterday's recap</div>
+      <div class="word-pills">
+        ${yesterdayIds.map(id=>{
+          const w=sec.words[id];
+          return `<div class="word-pill"><div class="pill-fr">${w.fr}</div><div class="pill-en">${w.en}</div></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Buttons
+    const dueCount = srGetDue(key).length;
+  html+=`<div class="action-btns">
+    <button class="btn btn-primary" onclick="startSession('${key}','daily')">&#9654; Start Today's Lesson</button>
+    ${dueCount > 0 ? `<button class="btn" style="background:var(--yellow);color:var(--bg);" onclick="startSession('${key}','review')">&#x1F501; Review Due (${dueCount} words)</button>` : ''}
+    <button class="btn btn-secondary" onclick="startSession('${key}','random')">&#127922; Random Practice</button>
+  </div>`;
+
+  // Progress
+  const learned=learnedIds.length;
+  const total=sec.words.length;
+  const dueNow=srGetDue(key).length;
+  html+=`<div class="stat-grid" style="margin-bottom:20px;">
+    <div class="stat-card"><div class="stat-num">${learned}</div><div class="stat-lbl">Learned</div></div>
+    <div class="stat-card"><div class="stat-num">${total-learned}</div><div class="stat-lbl">Remaining</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--yellow)">${dueNow}</div><div class="stat-lbl">Due for review</div></div>
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-lbl">Total words</div></div>
+  </div>`;
+
+  document.getElementById('sec-detail-body').innerHTML=html;
+}
+
+// BROWSE
+let browseFilter='all';
+function setCat(cat,el){
+  browseFilter=cat;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderWords();
+}
+function renderWords(){
+  const q=document.getElementById('search-inp').value.toLowerCase();
+  const list=document.getElementById('words-list');
+  let allWords=[];
+  SECTIONS.forEach(sec=>{
+    if(browseFilter==='all'||browseFilter===sec.key){
+      sec.words.forEach((w,i)=>allWords.push({...w,secKey:sec.key,secIdx:i,secIcon:sec.icon}));
+    }
+  });
+  const filtered=allWords.filter(w=>!q||w.fr.toLowerCase().includes(q)||w.en.toLowerCase().includes(q));
+  list.innerHTML=filtered.slice(0,200).map((w,n)=>{
+    const learned=S.learned[w.secKey].includes(w.secIdx);
+    const today=S.today[w.secKey].includes(w.secIdx);
+    const status=learned?'<span class="wr-status s-learned">✓</span>'
+      :today?'<span class="wr-status s-today">Today</span>'
+      :'<span class="wr-status s-locked">🔒</span>';
+    return `<div class="word-row">
+      <div class="wr-num">${w.secIcon}</div>
+      <div class="wr-info">
+        <div class="wr-fr">${w.fr}</div>
+        <div class="wr-en">${w.en} · ${w.pos}</div>
+      </div>${status}
+    </div>`;
+  }).join('')+(filtered.length>200?`<div style="text-align:center;color:var(--muted);padding:16px;font-size:.82rem;">Showing first 200 results</div>`:'');
+}
+
+function filterWords(){renderWords();}
+
+// TOAST
+let toastT;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function esc(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+
+// INIT
+loadS(); checkStreak(); assignToday(); renderHome();
+</script>
+</body>
+</html>
